@@ -1,0 +1,45 @@
+#cross-compile for windows 32/64 bit platforms
+#on ubuntu, the packages needed are mingw32, g++-mingw-w64-i686
+#invoke with make -f Makefile.win
+#the resulting .exe file needs libgcc_s_sjlj-1.dll to run
+#normally found here: /usr/lib/gcc/i686-w64-mingw32/4.8/libgcc_s_sjlj-1.dll
+
+#for a clean build, always make clean before using other targets
+
+CC = i686-w64-mingw32-g++
+
+OPTS = -static-libstdc++ -O3 -DWINDOWSVERSION -Wno-write-strings
+LIBS = -lwsock32
+
+LIBGCC_DLL = /usr/lib/gcc/i686-w64-mingw32/4.8/libgcc_s_sjlj-1.dll
+
+SRC = src
+BUILD = build
+PREFIX = /usr/local
+INSTALLDIR = $(PREFIX)/bin
+
+$(shell mkdir -p $(BUILD))
+
+clean:
+	-rm -rf $(BUILD)
+
+ntripclient: $(SRC)/ntripclient.c $(SRC)/serial.c
+	$(CC) $(OPTS) $(SRC)/ntripclient.c -o $(BUILD)/ntripclient.exe $(LIBS)
+
+zip: Makefile Makefile.win README $(SRC)/ntripclient.c $(SRC)/serial.c
+	zip -9r $(BUILD)/ntripclient_src.zip Makefile Makefile.win README $(SRC)
+
+tgz: Makefile Makefile.win README $(SRC)/ntripclient.c $(SRC)/serial.c
+	tar -cvfz $(BUILD)/ntripclient_src.tgz Makefile Makefile.win README $(SRC)
+
+dist: ntripclient zip
+	$(shell mkdir -p $(BUILD)/ntripclient_win)
+	cp $(BUILD)/ntripclient.exe $(BUILD)/ntripclient_win
+	cp $(LIBGCC_DLL) $(BUILD)/ntripclient_win
+	cp README $(BUILD)/ntripclient_win/README.txt
+	cp LICENSE $(BUILD)/ntripclient_win/LICENSE.txt
+	unix2dos $(BUILD)/ntripclient_win/README.txt
+	unix2dos $(BUILD)/ntripclient_win/LICENSE.txt
+	cp $(BUILD)/ntripclient_src.zip $(BUILD)/ntripclient_win
+	cd $(BUILD) && zip -9r ntripclient_win.zip ntripclient_win
+	@echo "resulting ntripclient_win.zip is in $(BUILD)"

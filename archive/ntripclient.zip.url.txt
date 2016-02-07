@@ -1,0 +1,4 @@
+http://igs.bkg.bund.de/root_ftp/NTRIP/software/ntripclient.zip
+Sun Feb  7 18:40:23 CET 2016
+
+https://software.rtcm-ntrip.org/browser/ntrip/trunk/ntripclient
