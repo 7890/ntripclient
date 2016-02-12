@@ -20,8 +20,7 @@ INSTALLDIR = $(PREFIX)/bin
 
 $(shell mkdir -p $(BUILD))
 
-clean:
-	-rm -rf $(BUILD)
+default: ntripclient
 
 ntripclient: $(SRC)/ntripclient.c $(SRC)/serial.c
 	$(CC) $(OPTS) $(SRC)/ntripclient.c -o $(BUILD)/ntripclient.exe $(LIBS)
@@ -43,3 +42,6 @@ dist: ntripclient zip
 	cp $(BUILD)/ntripclient_src.zip $(BUILD)/ntripclient_win
 	cd $(BUILD) && zip -9r ntripclient_win.zip ntripclient_win
 	@echo "resulting ntripclient_win.zip is in $(BUILD)"
+
+clean:
+	-rm -rf $(BUILD)
