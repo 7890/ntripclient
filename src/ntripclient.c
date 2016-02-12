@@ -601,7 +601,7 @@ int main(int argc, char **argv)
   if(getargs(argc, argv, &args))
   {
     struct serial sx;
-    FILE *ser = 0;
+    FILE *log_file = 0;
     char nmeabuffer[200] = "$GPGGA,"; /* our start string */
     size_t nmeabufpos = 0;
     size_t nmeastarpos = 0;
@@ -617,7 +617,7 @@ int main(int argc, char **argv)
       }
       if(args.serlogfile)
       {
-        if(!(ser = fopen(args.serlogfile, "a+")))
+        if(!(log_file = fopen(args.serlogfile, "a+")))
         {
           SerialFree(&sx);
           fprintf(stderr, "Could not open serial logfile.\n");
@@ -1683,8 +1683,11 @@ ntripclient.c:1066:73: error: invalid conversion from 'socklen_t* {aka unsigned 
                       int j = 0;
                       if(i < 200) doloop = 0;
                       fwrite(buf, i, 1, stdout);
-                      if(ser)
-                        fwrite(buf, i, 1, ser);
+                      if(log_file)
+			{
+				//write to logfile
+				fwrite(buf, i, 1, log_file);
+			}
                       while(j < i)
                       {
                         if(nmeabufpos < 6)
@@ -1766,8 +1769,11 @@ ntripclient.c:1066:73: error: invalid conversion from 'socklen_t* {aka unsigned 
     {
       SerialFree(&sx);
     }
-    if(ser)
-      fclose(ser);
+    if(log_file)
+	{
+		//close logfile
+		fclose(log_file);
+	}
   }
   return 0;
 }
